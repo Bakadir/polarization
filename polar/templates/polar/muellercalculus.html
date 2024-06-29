@@ -1,0 +1,189 @@
+{% extends 'polar/base.html' %}
+
+
+{% block content %}
+
+
+    {% load static %}
+<br><br>
+<h1 align="center">Mueller Calculus</h1>
+
+<body style="padding: 50px;">
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ matrix_formset.management_form }}
+        <div class="table-container">
+            <table>
+            <tr>
+                <th>Input Polarization</th>
+                <th>for Linear Polarization</th>
+                <th colspan="3">for Elliptical Polarization</th>
+               <!--  <th colspan="2">for Ellipsometry</th> -->
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>Angle in degrees :</td>
+                <td>Degree of polarization</td>
+                <td>Azimuth in degrees :</td>
+                <td>Elliptic Angle in degrees :</td>
+                <!-- <td>Tanpsi :</td>
+                <td>Delta in degrees:</td> -->
+                
+                
+            </tr>
+            <tr>
+                <td>{{ vector_form.vector_type }}</td>
+                <td>{{ vector_form.angle }}</td>
+                <td>{{ vector_form.degree_of_polarization }}</td>
+                <td>{{ vector_form.azimuth }}</td>
+                <td>{{ vector_form.elliptic_angle }}</td>
+              <!--   <td>{{ vector_form.tanpsi }}</td>
+                <td>{{ vector_form.delta }}</td> -->
+                
+                
+            </tr>
+            
+        </table>
+        <table>
+            
+            <tr>
+                <th>Optical Elements</th>
+                <th>for Linear Polarizer</th>
+                <th>for Retarder or Wave Plate</th>
+                <th>for Retarder</th>
+                <th>for Attenuator</th>
+                <th colspan="2">for Fresnel Effects</th>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>Angle in degrees</td>
+                <td>Fast Axis Angle in degrees</td>
+                <td>Retardance in degrees</td>
+                <td>Optical Density</td>
+                <td>Index of Refraction</td>
+                <td>Incidence Angle in degrees</td>
+            </tr>
+            {% for matrix_form in matrix_formset %}
+            <tr class="matrix-form">
+                <td>{{ matrix_form.matrix_type }}</td>
+                <td>{{ matrix_form.matrix_angle }}</td>
+                <td>{{ matrix_form.fast_axis_angle }}</td>
+                <td>{{ matrix_form.retardance }}</td>
+                <td>{{ matrix_form.optical_density }}</td>
+                <td>{{ matrix_form.re_index_of_refraction }} + <strong>j</strong>{{ matrix_form.im_index_of_refraction }}</td>
+                <td>{{ matrix_form.incidence_angle }}</td>
+                
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+        <br>
+        <button class="btn btn-outline-secondary" name="delete_matrix">-</button>
+        <button class="btn btn-outline-secondary" name="add_matrix">+</button>
+        <br><br>
+        <button type="submit" name="generate_stokes&muellerpola" formmethod="post" class="btn btn-primary" align="right">Submit</button>       
+    <hr>    
+    
+    {% if animation %}
+    <div class="table-container" style="width: 100%;">
+        <table >
+        <tr>
+            <th>&nbsp;</th>
+            {% for state in states %}
+                <th >{{ state.polarization }}</th>
+            {% endfor %}
+        </tr>
+        <tr>
+            <th>Animation</th>
+            {% for state in states %}
+                <td><img src="{% static state.animation %}" style="height: 150px;" alt="State Animation"></td>
+            {% endfor %}
+        </tr>
+        <tr>
+            <th>Stokes Vector</th>
+            {% for state in states %}
+                <td>{{ state.stokes_vector }}</td>
+            {% endfor %}
+        </tr>
+        <tr>
+            <th>Intensity</th>
+            {% for state in states %}
+                <td>{{ state.intensity }}</td>
+            {% endfor %}
+        </tr>
+        <tr>
+            <th>Degree of Polarization</th>
+            {% for state in states %}
+                <td>{{ state.degree_of_polarization }}</td>
+            {% endfor %}
+        </tr>
+        <tr>
+            <th>Ellipse Azimuth in degrees</th>
+            {% for state in states %}
+                <td>{{ state.ellipse_orientation }}°</td>
+            {% endfor %}
+        </tr>
+        <tr>
+            <th>Ellipse Elliptic Angle in degrees</th>
+            {% for state in states %}
+                <td>{{ state.ellipse_ellipticity }}°</td>
+            {% endfor %}
+        </tr>
+        <tr>
+            <th>Ellipse Axes</th>
+            {% for state in states %}
+                <td>{{ state.ellipse_axes }}</td>
+            {% endfor %}
+        </tr>
+    </table>
+    </div>
+    <br>
+    <h2 align="center">Stokes Vectors on Poincaré Sphere :</h2>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <div style="width: 100%;">
+        {{ plot_html|safe }}
+    </div>
+{% endif %}
+</form>
+</body>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    
+    justify-content: center;
+    align-items: center;
+    
+    
+}
+
+.table-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+table {
+    border-collapse: collapse;
+    
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 5px;
+    border: 1px solid #b9b9b9;
+    text-align: center;
+}
+
+th {
+    background-color: #cecece;
+    color: rgb(0, 0, 0);
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+</style>
+{% endblock %}
