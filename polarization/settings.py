@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-_hl0vq9wswka6svu$l*d-v956qh1l!c1&0#yiu0*4t4r0*1fvj
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = ['https://polarization.up.railway.app']
 
 # settings.py
 
